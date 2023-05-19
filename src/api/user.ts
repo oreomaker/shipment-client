@@ -10,12 +10,27 @@ export interface LoginData {
 export interface LoginRes {
   token: string;
 }
+
+export interface RegisterData {
+  username: string;
+  password: string;
+  checkPassword: string;
+}
+
+export interface RegisterRes {
+  status: string;
+}
+
 export function login(data: LoginData) {
   return axios.post<LoginRes>('/api/user/login', data);
 }
 
 export function logout() {
   return axios.post<LoginRes>('/api/user/logout');
+}
+
+export function register(data: RegisterData) {
+  return axios.post<RegisterRes>('/api/user/register', data);
 }
 
 export function getUserInfo() {
