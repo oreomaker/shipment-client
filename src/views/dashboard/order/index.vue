@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <Breadcrumb :items="['工作台', '物流订单']" />
-    <a-spin :loading="loading" style="width: 100%">
+    <a-spin style="width: 100%">
       <a-card class="general-card">
         <div class="wrapper">
           <a-steps
@@ -27,12 +27,10 @@
 
 <script setup lang="ts">
   import { ref } from 'vue';
-  import useLoading from '@/hooks/loading';
   import OrderForm from './components/order-form.vue';
   import PaymentCard from './components/payment-card.vue';
   import ResulResult from './components/order-result.vue';
 
-  const { loading, setLoading } = useLoading(false);
   const step = ref(1);
 
   const changeStep = (direction: string | number) => {
@@ -41,11 +39,7 @@
       return;
     }
 
-    if (direction === 'forward' || direction === 'submit') {
-      if (direction === 'submit') {
-        // submitForm();
-        return;
-      }
+    if (direction === 'forward') {
       step.value += 1;
     } else if (direction === 'backward') {
       step.value -= 1;
