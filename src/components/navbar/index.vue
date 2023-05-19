@@ -10,7 +10,7 @@
           :style="{ margin: 0, fontSize: '18px' }"
           :heading="5"
         >
-          Arco Pro
+          Shipment System
         </a-typography-title>
         <icon-menu-fold
           v-if="!topMenu && appStore.device === 'mobile'"
@@ -23,7 +23,7 @@
       <Menu v-if="topMenu" />
     </div>
     <ul class="right-side">
-      <li>
+      <!-- <li>
         <a-tooltip :content="$t('settings.search')">
           <a-button class="nav-btn" type="outline" :shape="'circle'">
             <template #icon>
@@ -31,8 +31,8 @@
             </template>
           </a-button>
         </a-tooltip>
-      </li>
-      <li>
+      </li> -->
+      <!-- <li>
         <a-tooltip :content="$t('settings.language')">
           <a-button
             class="nav-btn"
@@ -60,7 +60,7 @@
             </a-doption>
           </template>
         </a-dropdown>
-      </li>
+      </li> -->
       <li>
         <a-tooltip
           :content="
@@ -82,7 +82,7 @@
           </a-button>
         </a-tooltip>
       </li>
-      <li>
+      <!-- <li>
         <a-tooltip :content="$t('settings.navbar.alerts')">
           <div class="message-box-trigger">
             <a-badge :count="9" dot>
@@ -108,7 +108,7 @@
             <message-box />
           </template>
         </a-popover>
-      </li>
+      </li> -->
       <li>
         <a-tooltip
           :content="
@@ -197,18 +197,18 @@
   import { Message } from '@arco-design/web-vue';
   import { useDark, useToggle, useFullscreen } from '@vueuse/core';
   import { useAppStore, useUserStore } from '@/store';
-  import { LOCALE_OPTIONS } from '@/locale';
-  import useLocale from '@/hooks/locale';
+  // import { LOCALE_OPTIONS } from '@/locale';
+  // import useLocale from '@/hooks/locale';
   import useUser from '@/hooks/user';
   import Menu from '@/components/menu/index.vue';
-  import MessageBox from '../message-box/index.vue';
+  // import MessageBox from '../message-box/index.vue';
 
   const appStore = useAppStore();
   const userStore = useUserStore();
   const { logout } = useUser();
-  const { changeLocale, currentLocale } = useLocale();
+  // const { changeLocale, currentLocale } = useLocale();
   const { isFullscreen, toggle: toggleFullScreen } = useFullscreen();
-  const locales = [...LOCALE_OPTIONS];
+  // const locales = [...LOCALE_OPTIONS];
   const avatar = computed(() => {
     return userStore.avatar;
   });
@@ -234,27 +234,27 @@
   const setVisible = () => {
     appStore.updateSettings({ globalSettings: true });
   };
-  const refBtn = ref();
-  const triggerBtn = ref();
-  const setPopoverVisible = () => {
-    const event = new MouseEvent('click', {
-      view: window,
-      bubbles: true,
-      cancelable: true,
-    });
-    refBtn.value.dispatchEvent(event);
-  };
+  // const refBtn = ref();
+  // const triggerBtn = ref();
+  // const setPopoverVisible = () => {
+  //   const event = new MouseEvent('click', {
+  //     view: window,
+  //     bubbles: true,
+  //     cancelable: true,
+  //   });
+  //   refBtn.value.dispatchEvent(event);
+  // };
   const handleLogout = () => {
     logout();
   };
-  const setDropDownVisible = () => {
-    const event = new MouseEvent('click', {
-      view: window,
-      bubbles: true,
-      cancelable: true,
-    });
-    triggerBtn.value.dispatchEvent(event);
-  };
+  // const setDropDownVisible = () => {
+  //   const event = new MouseEvent('click', {
+  //     view: window,
+  //     bubbles: true,
+  //     cancelable: true,
+  //   });
+  //   triggerBtn.value.dispatchEvent(event);
+  // };
   const switchRoles = async () => {
     const res = await userStore.switchRoles();
     Message.success(res as string);
