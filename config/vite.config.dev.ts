@@ -7,6 +7,13 @@ export default mergeConfig(
     mode: 'development',
     server: {
       open: true,
+      proxy: {
+        '/api': {
+          target: 'http://localhost:8080/v1/',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, ''),
+        },
+      },
       fs: {
         strict: true,
       },

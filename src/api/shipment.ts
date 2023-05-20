@@ -29,15 +29,16 @@ export enum ShipmentType {
 }
 
 export interface ShipmentData {
+  id: number;
+  time: string;
   description: string;
-  orderId: number;
   type: ShipmentType;
 }
 
 // eslint-disable-next-line no-shadow
 export enum OrderStatus {
   PENDING = 'PENDING',
-  PROCESSING = 'PROCESSING',
+  PROCESSING = 'DELIVERING',
   DELIVERED = 'DELIVERED',
 }
 

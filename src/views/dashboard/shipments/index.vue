@@ -20,22 +20,32 @@
           </template>
           <template #operation="{ record }">
             <a-space>
-              <a-button @click="handleDetails">查看详情</a-button>
+              <a-button size="mini" @click="handleDetails(record.shipments)"
+                >查看详情</a-button
+              >
             </a-space>
             <a-modal
               v-if="visible"
-              v-model:visible="visible"
+              :visible="visible"
               :hide-cancel="true"
+              :closable="false"
               @ok="handleOk"
+              @cancel="handleOk"
             >
               <template #title> 物流详情 </template>
-              <a-timeline :reverse="false">
+              <a-timeline v-if="visible" :reverse="false">
                 <a-timeline-item
-                  v-for="item in record.shipments"
+                  v-for="item in shipmentsData"
                   :key="item.id"
                   :label="item.time"
-                  >{{ item.description }}</a-timeline-item
                 >
+                  {{ item.description }}
+                  <a-tag
+                    :color="shipmentTypeColorMap[item.type as ShipmentType]"
+                  >
+                    {{ shipmentTypeMap[item.type as ShipmentType] }}
+                  </a-tag>
+                </a-timeline-item>
               </a-timeline>
             </a-modal>
           </template>
@@ -49,7 +59,13 @@
   import { computed, ref, reactive } from 'vue';
   import { TableColumnData, TableRowSelection } from '@arco-design/web-vue';
   import useLoading from '@/hooks/loading';
-  import { getAllOrders, OrderInfo, OrderStatus } from '@/api/shipment';
+  import {
+    getAllOrders,
+    OrderInfo,
+    OrderStatus,
+    ShipmentData,
+    ShipmentType,
+  } from '@/api/shipment';
 
   const visible = ref(false);
   const { loading, setLoading } = useLoading(true);
@@ -101,13 +117,25 @@
   });
   const statusColorMap = reactive({
     PENDING: 'blue',
-    PROCESSING: 'green',
+    DELIVERING: 'green',
     DELIVERED: 'gray',
   });
   const statusMap = reactive({
     PENDING: '待发货',
-    PROCESSING: '运输中',
+    DELIVERING: '运输中',
     DELIVERED: '已签收',
+  });
+  const shipmentTypeColorMap = reactive({
+    ORDER: 'blue',
+    PROCESSING: 'gray',
+    IN_TRANSIT: 'gray',
+    DELIVERED: 'blue',
+  });
+  const shipmentTypeMap = reactive({
+    ORDER: '下单',
+    PROCESSING: '揽收',
+    IN_TRANSIT: '运输中',
+    DELIVERED: '签收',
   });
 
   const fetchData = async () => {
@@ -117,7 +145,9 @@
     setLoading(false);
   };
 
-  const handleDetails = () => {
+  let shipmentsData = reactive([] as ShipmentData[]);
+  const handleDetails = (shipments: ShipmentData[]) => {
+    shipmentsData = shipments;
     visible.value = true;
   };
 

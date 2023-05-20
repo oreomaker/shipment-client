@@ -20,6 +20,7 @@
           <a-statistic
             :value="orderPrice.price"
             show-group-separator
+            :precision="2"
             :value-style="{ color: '#165DFF' }"
           >
             <template #suffix> 元起 </template>
