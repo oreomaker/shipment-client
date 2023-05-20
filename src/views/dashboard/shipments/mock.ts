@@ -3,6 +3,13 @@ import setupMock, { successResponseWrap } from '@/utils/setup-mock';
 
 setupMock({
   setup() {
+    Mock.mock(new RegExp('/api/order-price'), () => {
+      return successResponseWrap({
+        price: 100,
+        basePrice: 100,
+        pricingType: '重量计费',
+      });
+    });
     // submit
     Mock.mock(new RegExp('/api/orders'), () => {
       return successResponseWrap([

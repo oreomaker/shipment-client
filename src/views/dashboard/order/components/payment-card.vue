@@ -1,7 +1,8 @@
 <template>
   <a-card class="general-card" style="width: 100%" title="订单详情">
-    <a-descriptions :data="data" />
+    <a-descriptions :loading="loading" :data="data" />
     <a-collapse
+      :loading="loading"
       :default-active-key="['1']"
       :bordered="false"
       expand-icon-position="right"
@@ -11,7 +12,7 @@
         <template #header>
           预估费用
           <a-statistic
-            :value="13"
+            :value="price"
             show-group-separator
             :value-style="{ color: '#165DFF' }"
           >
@@ -34,11 +35,40 @@
 </template>
 
 <script setup lang="ts">
+  import { useShipmentStore } from '@/store';
+  import {
+    ShipOrderData,
+    getShipOrderPrice,
+    createShipOrder,
+  } from '@/api/shipment';
+  import { reactive, ref } from 'vue';
+  import useLoading from '@/hooks/loading';
+  import Message from '@arco-design/web-vue/es/message';
+
+  const { loading, setLoading } = useLoading();
+
+  const shipmentStore = useShipmentStore();
+  const shipOrderData = reactive(shipmentStore.shipOrder as ShipOrderData);
+  const price = ref(0);
+
+  const getPrice = async (data: ShipOrderData) => {
+    setLoading(true);
+    const res = await getShipOrderPrice(data);
+    price.value = res.data.price;
+    setLoading(false);
+  };
+
+  getPrice(shipOrderData);
+
   const emits = defineEmits(['changeStep']);
   const goPrev = () => {
     emits('changeStep', 'backward');
   };
-  const oneMore = () => {
+  const oneMore = async () => {
+    setLoading(true);
+    await createShipOrder(shipOrderData);
+    await shipmentStore.initShipOrder();
+    setLoading(false);
     emits('changeStep', 'forward', {});
   };
 

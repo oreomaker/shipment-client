@@ -30,6 +30,27 @@ const useShipmentStore = defineStore('shipment', {
     setShipOrder(partial: Partial<ShipOrderState>) {
       this.$patch(partial);
     },
+    initShipOrder() {
+      this.setShipOrder({
+        sender: {
+          name: '',
+          address: '',
+          phone: '',
+        },
+        receiver: {
+          name: '',
+          address: '',
+          phone: '',
+        },
+        cargo: {
+          name: '',
+          length: 0,
+          width: 0,
+          height: 0,
+          weight: 0,
+        },
+      });
+    },
   },
 });
 

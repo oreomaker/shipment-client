@@ -56,6 +56,16 @@ export interface OrderInfo {
   shipments: ShipmentData[];
 }
 
+export interface OrderPrice {
+  price: number;
+  basePrice: number;
+  pricingType: string;
+}
+
+export function getShipOrderPrice(data: ShipOrderData) {
+  return axios.post<OrderPrice>('/api/order-price', data);
+}
+
 export function createShipOrder(data: ShipOrderData) {
   return axios.post('/api/orders', data);
 }
