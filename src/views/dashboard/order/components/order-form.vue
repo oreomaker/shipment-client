@@ -127,7 +127,7 @@
         <a-col :span="6">
           <a-form-item
             field="length"
-            label="货品长度"
+            label="货品长度(m)"
             :rules="[{ required: true, message: '货品长度不能为空' }]"
             :validate-trigger="['change', 'blur']"
           >
@@ -141,7 +141,7 @@
         <a-col :span="6">
           <a-form-item
             field="width"
-            label="货品宽度"
+            label="货品宽度(m)"
             :rules="[{ required: true, message: '货品宽度不能为空' }]"
             :validate-trigger="['change', 'blur']"
           >
@@ -155,7 +155,7 @@
         <a-col :span="6">
           <a-form-item
             field="height"
-            label="货品高度"
+            label="货品高度(m)"
             :rules="[{ required: true, message: '货品高度不能为空' }]"
             :validate-trigger="['change', 'blur']"
           >
@@ -169,8 +169,11 @@
         <a-col :span="6">
           <a-form-item
             field="weight"
-            label="货品重量"
-            :rules="[{ required: true, message: '货品重量不能为空' }]"
+            label="货品重量(kg)"
+            :rules="[
+              { required: true, message: '货品重量不能为空' },
+              { positive: true, message: '货品重量必须大于0' },
+            ]"
             :validate-trigger="['change', 'blur']"
           >
             <a-space>

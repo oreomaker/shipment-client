@@ -1,10 +1,10 @@
 <template>
   <div class="container">
-    <Breadcrumb :items="['工作台', '出库管理']" />
+    <Breadcrumb :items="['工作台', '订单物流']" />
     <a-spin :loading="loading" style="width: 100%">
       <a-card class="general-card">
         <template #title>
-          {{ '出库管理' }}
+          {{ '订单物流' }}
         </template>
         <a-table
           row-key="id"

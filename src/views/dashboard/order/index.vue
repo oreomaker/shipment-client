@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <Breadcrumb :items="['工作台', '物流订单']" />
+    <Breadcrumb :items="['工作台', '创建订单']" />
     <a-spin style="width: 100%">
       <a-card class="general-card">
         <div class="wrapper">
