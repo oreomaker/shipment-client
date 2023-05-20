@@ -7,48 +7,37 @@
           {{ '出库管理' }}
         </template>
         <a-table
-          v-model:selectedKeys="selectedKeys"
           row-key="id"
           :loading="loading"
           :columns="columns as TableColumnData[]"
           :data="tableData"
           :row-selection="rowSelection as TableRowSelection"
         >
-          <template
-            #des-filter="{
-              filterValue,
-              setFilterValue,
-              handleFilterConfirm,
-              handleFilterReset,
-            }"
-          >
-            <div class="des-filter">
-              <a-space direction="vertical">
-                <a-input
-                  :model-value="filterValue[0]"
-                  @input="(value) => setFilterValue([value])"
-                />
-                <div class="des-filter-footer">
-                  <a-button @click="handleFilterConfirm">确认</a-button>
-                  <a-button @click="handleFilterReset">重置</a-button>
-                </div>
-              </a-space>
-            </div>
+          <template #status="{ record }">
+            <a-tag :color="statusColorMap[record.orderStatus as OrderStatus]">
+              {{ statusMap[record.orderStatus as OrderStatus] }}
+            </a-tag>
           </template>
           <template #operation="{ record }">
             <a-space>
-              <a-button @click="handleDetails(record)">查看详情</a-button>
-              <a-popconfirm content="确定出库?" @ok="handleOut(record.id)">
-                <a-button type="primary"> 出库 </a-button>
-              </a-popconfirm>
+              <a-button @click="handleDetails">查看详情</a-button>
             </a-space>
-            <DetailsDrawer
+            <a-modal
               v-if="visible"
-              :data="detailCargoList"
-              :visible="visible"
-              @ok="handleDetailsOk"
-              @cancel="handleDetailsCancel"
-            />
+              v-model:visible="visible"
+              :hide-cancel="true"
+              @ok="handleOk"
+            >
+              <template #title> 物流详情 </template>
+              <a-timeline :reverse="false">
+                <a-timeline-item
+                  v-for="item in record.shipments"
+                  :key="item.id"
+                  :label="item.time"
+                  >{{ item.description }}</a-timeline-item
+                >
+              </a-timeline>
+            </a-modal>
           </template>
         </a-table>
       </a-card>
@@ -57,38 +46,52 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, ref, reactive, h } from 'vue';
-  import { IconSearch } from '@arco-design/web-vue/es/icon';
+  import { computed, ref, reactive } from 'vue';
   import { TableColumnData, TableRowSelection } from '@arco-design/web-vue';
   import useLoading from '@/hooks/loading';
-  import { getCargo, outStorage } from '@/api/storage';
-  import DetailsDrawer from './components/details-drawer.vue';
+  import { getAllOrders, OrderInfo, OrderStatus } from '@/api/shipment';
 
-  const selectedKeys = ref([]);
   const visible = ref(false);
   const { loading, setLoading } = useLoading(true);
-  const tableData = ref([]);
+  const tableData = ref([] as OrderInfo[]);
 
   const columns = computed(() => {
     return [
       {
-        title: '批次号',
+        title: '订单号',
         dataIndex: 'id',
       },
       {
-        title: '目的地',
-        dataIndex: 'branch.city',
-        filterable: {
-          filter: (value: any, record: any) => {
-            return record.branch.city.includes(...value);
-          },
-          slotName: 'des-filter',
-          icon: () => h(IconSearch),
-        },
+        title: '货品名称',
+        dataIndex: 'cargo.name',
       },
       {
-        title: '最早货物入库时间',
-        dataIndex: 'earliestTime',
+        title: '发货地址',
+        dataIndex: 'fromAddress',
+      },
+      {
+        title: '收货地址',
+        dataIndex: 'toAddress',
+      },
+      {
+        title: '发货人',
+        dataIndex: 'senderName',
+      },
+      {
+        title: '发货人联系方式',
+        dataIndex: 'senderPhone',
+      },
+      {
+        title: '收货人',
+        dataIndex: 'receiverName',
+      },
+      {
+        title: '收货人联系方式',
+        dataIndex: 'receiverPhone',
+      },
+      {
+        title: '订单状态',
+        slotName: 'status',
       },
       {
         title: '操作',
@@ -96,33 +99,26 @@
       },
     ];
   });
+  const statusColorMap = reactive({
+    PENDING: 'blue',
+    PROCESSING: 'green',
+    DELIVERED: 'gray',
+  });
+  const statusMap = reactive({
+    PENDING: '待发货',
+    PROCESSING: '运输中',
+    DELIVERED: '已签收',
+  });
 
   const fetchData = async () => {
     setLoading(true);
-    const data = await getCargo();
+    const data = await getAllOrders();
     tableData.value = data.data;
     setLoading(false);
   };
 
-  let detailCargoList = reactive([]);
-  const handleDetails = (record: any) => {
+  const handleDetails = () => {
     visible.value = true;
-    detailCargoList = record.cargoList;
-  };
-
-  const handleDetailsOk = () => {
-    visible.value = false;
-  };
-
-  const handleDetailsCancel = () => {
-    visible.value = false;
-  };
-
-  const handleOut = async (id: number) => {
-    setLoading(true);
-    await outStorage(id);
-    fetchData();
-    setLoading(false);
   };
 
   const rowSelection = reactive({
@@ -130,6 +126,10 @@
     showCheckedAll: true,
     onlyCurrent: false,
   });
+
+  const handleOk = () => {
+    visible.value = false;
+  };
 
   fetchData();
 </script>

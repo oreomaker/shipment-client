@@ -34,18 +34,40 @@ export interface ShipmentData {
   type: ShipmentType;
 }
 
+// eslint-disable-next-line no-shadow
+export enum OrderStatus {
+  PENDING = 'PENDING',
+  PROCESSING = 'PROCESSING',
+  DELIVERED = 'DELIVERED',
+}
+
+export interface OrderInfo {
+  id: number;
+  userId: number;
+  fromAddress: string;
+  toAddress: string;
+  senderName: string;
+  senderPhone: string;
+  receiverName: string;
+  receiverPhone: string;
+  cargo: CargoData;
+  createTime: string;
+  orderStatus: OrderStatus;
+  shipments: ShipmentData[];
+}
+
 export function createShipOrder(data: ShipOrderData) {
   return axios.post('/api/orders', data);
 }
 
-export function updateOrderShipment(){
+export function updateOrderShipment() {
   return axios.post('/api/orders/shipment');
 }
 
 export function getAllOrders() {
-  return axios.get('/api/orders');
+  return axios.get<OrderInfo[]>('/api/orders');
 }
 
 export function getOrder(id: number) {
-  return axios.get(`/api/orders/${id}`);
+  return axios.get<OrderInfo>(`/api/orders/${id}`);
 }
