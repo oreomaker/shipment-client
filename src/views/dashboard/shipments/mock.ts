@@ -8,6 +8,7 @@ setupMock({
         price: 100,
         basePrice: 100,
         pricingType: '重量计费',
+        surcharge: 0,
       });
     });
     // submit

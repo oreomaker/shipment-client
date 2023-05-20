@@ -1,8 +1,12 @@
 <template>
-  <a-card class="general-card" style="width: 100%" title="订单详情">
-    <a-descriptions :loading="loading" :data="data" />
-    {{ shipOrderData }}
-    {{ orderPrice }}
+  <a-card class="general-card" style="width: 100%" title="发货人信息">
+    <a-descriptions :loading="loading" :data="senderDesc" />
+  </a-card>
+  <a-card class="general-card" style="width: 100%" title="收货人信息">
+    <a-descriptions :loading="loading" :data="receiverDesc" />
+  </a-card>
+  <a-card class="general-card" style="width: 100%" title="货物信息">
+    <a-descriptions :loading="loading" :data="cargoDesc" />
     <a-collapse
       :loading="loading"
       :default-active-key="['1']"
@@ -44,7 +48,7 @@
     createShipOrder,
     OrderPrice,
   } from '@/api/shipment';
-  import { reactive, ref } from 'vue';
+  import { reactive } from 'vue';
   import useLoading from '@/hooks/loading';
   import Message from '@arco-design/web-vue/es/message';
 
@@ -53,6 +57,53 @@
   const shipmentStore = useShipmentStore();
   const shipOrderData = reactive(shipmentStore.shipOrder as ShipOrderData);
   let orderPrice = reactive({} as OrderPrice);
+
+  const senderDesc = [
+    {
+      label: '发货人姓名',
+      value: shipOrderData.sender.name,
+    },
+    {
+      label: '发货人电话',
+      value: shipOrderData.sender.phone,
+    },
+    {
+      label: '发货地址',
+      value: shipOrderData.sender.address,
+    },
+  ];
+  const receiverDesc = [
+    {
+      label: '收货人姓名',
+      value: shipOrderData.receiver.name,
+    },
+    {
+      label: '收货人电话',
+      value: shipOrderData.receiver.phone,
+    },
+    {
+      label: '收货地址',
+      value: shipOrderData.receiver.address,
+    },
+  ];
+  const cargoDesc = [
+    {
+      label: '货物名称',
+      value: shipOrderData.cargo.name,
+    },
+    {
+      label: '货物重量(kg)',
+      value: shipOrderData.cargo.weight.toString(),
+    },
+    {
+      label: '货物体积(m³)',
+      value: (
+        shipOrderData.cargo.length *
+        shipOrderData.cargo.width *
+        shipOrderData.cargo.height
+      ).toString(),
+    },
+  ];
 
   const getPrice = async (data: ShipOrderData) => {
     setLoading(true);
@@ -75,27 +126,4 @@
     setLoading(false);
     emits('changeStep', 'forward', {});
   };
-
-  const data = [
-    {
-      label: 'Name',
-      value: 'Socrates',
-    },
-    {
-      label: 'Mobile',
-      value: '123-1234-1234',
-    },
-    {
-      label: 'Residence',
-      value: 'Beijing',
-    },
-    {
-      label: 'Hometown',
-      value: 'Beijing',
-    },
-    {
-      label: '预估费用',
-      value: '13',
-    },
-  ];
 </script>
