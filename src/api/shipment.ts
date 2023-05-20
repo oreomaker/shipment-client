@@ -64,7 +64,7 @@ export interface OrderPrice {
 }
 
 export function getShipOrderPrice(data: ShipOrderData) {
-  return axios.post<OrderPrice>('/api/order-price', data);
+  return axios.post<OrderPrice>('/api/orders/order-price', data);
 }
 
 export function createShipOrder(data: ShipOrderData) {

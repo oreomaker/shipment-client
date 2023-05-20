@@ -2,6 +2,7 @@ import Mock from 'mockjs';
 import setupMock, { successResponseWrap } from '@/utils/setup-mock';
 
 setupMock({
+  mock: false,
   setup() {
     Mock.mock(new RegExp('/api/order-price'), () => {
       return successResponseWrap({
