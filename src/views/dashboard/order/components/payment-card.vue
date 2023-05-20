@@ -1,6 +1,8 @@
 <template>
   <a-card class="general-card" style="width: 100%" title="订单详情">
     <a-descriptions :loading="loading" :data="data" />
+    {{ shipOrderData }}
+    {{ orderPrice }}
     <a-collapse
       :loading="loading"
       :default-active-key="['1']"
@@ -12,7 +14,7 @@
         <template #header>
           预估费用
           <a-statistic
-            :value="price"
+            :value="orderPrice.price"
             show-group-separator
             :value-style="{ color: '#165DFF' }"
           >
@@ -22,9 +24,9 @@
         <template #expand-icon>
           <icon-plus />
         </template>
-        <div>基础运费</div>
-        <div>计费方式</div>
-        <div>附加费</div>
+        <div>基础运费: {{ orderPrice.basePrice }}</div>
+        <div>计费方式: {{ orderPrice.pricingType }}</div>
+        <div>附加费: {{ orderPrice.surcharge }}</div>
       </a-collapse-item>
     </a-collapse>
   </a-card>
@@ -40,6 +42,7 @@
     ShipOrderData,
     getShipOrderPrice,
     createShipOrder,
+    OrderPrice,
   } from '@/api/shipment';
   import { reactive, ref } from 'vue';
   import useLoading from '@/hooks/loading';
@@ -49,12 +52,12 @@
 
   const shipmentStore = useShipmentStore();
   const shipOrderData = reactive(shipmentStore.shipOrder as ShipOrderData);
-  const price = ref(0);
+  let orderPrice = reactive({} as OrderPrice);
 
   const getPrice = async (data: ShipOrderData) => {
     setLoading(true);
     const res = await getShipOrderPrice(data);
-    price.value = res.data.price;
+    orderPrice = res.data;
     setLoading(false);
   };
 
@@ -68,6 +71,7 @@
     setLoading(true);
     await createShipOrder(shipOrderData);
     await shipmentStore.initShipOrder();
+    Message.success('成功下单');
     setLoading(false);
     emits('changeStep', 'forward', {});
   };

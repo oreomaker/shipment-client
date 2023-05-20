@@ -60,6 +60,7 @@ export interface OrderPrice {
   price: number;
   basePrice: number;
   pricingType: string;
+  surcharge: number;
 }
 
 export function getShipOrderPrice(data: ShipOrderData) {
